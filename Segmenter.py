@@ -13,5 +13,4 @@ class Segmenter():
 
 	def Segment(self,Audio):
 		return utteranceList
-		pass
 
