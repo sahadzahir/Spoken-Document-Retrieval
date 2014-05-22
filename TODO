@@ -1,3 +1,10 @@
 Thu, May 22, 2014  4:33:58 PM
 
-COMMENT YOUR CODE!
+1. COMMENT YOUR CODE!
+2. fix lattice.py possibly add an object to encapsulate one-best results (Transcription?)
+3. move images to a particular directory (images)
+4.  fix testtoolbar so that it loads the audio properly
+ --> implement something that will load audio, play back first.
+
+
+- BP

@@ -1,18 +1,13 @@
-import wx
-
-
-
 
 class Audio():
-
-	sampleRate=0
-	Duration_milli=0
-	utteranceList=[]
-	filePath=""
-
+	""
+	# only handles 16khz, 16-bit depth Little Endian
 
 	def __init__(self):
-		pass
+		self.sampleRate=0
+		self.Duration_milli=0
+		self.utteranceList=[]
+		self.filePath=""
 
 	def getRate(self):
 		return self.sampleRate
@@ -21,7 +16,13 @@ class Audio():
 		return self.Duration_milli
 
 	def getData(self):
+		fin=open(self.filePath)
+		B=fin.read()
+		samples = struct.unpack(">h",B)
+		return samples
 		pass #Forgot what this method is for
+	
+		
 
 
 

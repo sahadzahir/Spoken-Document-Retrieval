@@ -1,14 +1,20 @@
+#!/usr/bin/python
+"""
+Authors: Sahad, Shashvat
+Last updated:    Thu, May 22, 2014  5:06:55 PM
+"""
+
 import  wx
 import  images
 import wx.media
 import wave
 
 FRAMETB = True
-TBFLAGS = ( wx.TB_HORIZONTAL
-            | wx.NO_BORDER
-            | wx.TB_FLAT
-            #| wx.TB_TEXT
-            #| wx.TB_HORZ_LAYOUT
+TBFLAGS = ( wx.TB_HORIZONTAL			# toolbar arranges icons horizontally
+            | wx.NO_BORDER			# don't show borders
+            | wx.TB_FLAT			# 
+            #| wx.TB_TEXT			# 
+            #| wx.TB_HORZ_LAYOUT			
             )
 
 #---------------------------------------------------------------------------
@@ -19,33 +25,31 @@ class TestToolBar(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, -1, 'Test ToolBar', size=(600, 400))
 
-        self.panel = wx.Panel(self)
-
+        self.panel  = wx.Panel(self)
         self.player = wx.media.MediaCtrl(self.panel)
-        
-        self.sizer = wx.GridBagSizer(hgap=10, vgap=5)
+        self.sizer  = wx.GridBagSizer(hgap=10, vgap=5)
 
-        #Receive Search Inputs
+        # Receive Search Inputs
         tc0 = wx.TextCtrl(self.panel, size=(175, 25))
         self.sizer.Add(tc0, pos=(0, 2), border=15, span=(1, 1), flag=wx.TOP|wx.LEFT|wx.BOTTOM)
 
-        #Separator Line
+        # Separator Line
         line = wx.StaticLine(self.panel)
         self.sizer.Add(line, pos=(3, 0), span=(1, 5),flag=wx.EXPAND|wx.BOTTOM, border=10)
 
-        #Play Button Image converted to Bitmap
+        # Play Button Image converted to Bitmap
         imageFile = "button_play.png"
         self.image1 = wx.Image(imageFile, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 
-        #Pause Button Image converted to Bitmap
+        # Pause Button Image converted to Bitmap
         imageFile2 = "button_pause.png"
         self.image2 = wx.Image(imageFile2, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 
-        #Scroller
+        # Scroller 
         #scroll = wx.ScrolledWindow(self, -1)
         #scroll.SetScrollbars(1, 1, 1200, 800)
 
-        #Array of 'Play' Bitmap Buttons
+        # Array of 'Play' Bitmap Buttons
         Play_Array = []
 
         #Array of sliders
@@ -68,7 +72,6 @@ class TestToolBar(wx.Frame):
 
         if FRAMETB:
             tb = self.CreateToolBar( TBFLAGS )
-
         else:
             tb = wx.ToolBar(client, style=TBFLAGS)
             sizer = wx.BoxSizer(wx.VERTICAL)
@@ -84,12 +87,10 @@ class TestToolBar(wx.Frame):
         paste_bmp= wx.ArtProvider.GetBitmap(wx.ART_PASTE, wx.ART_TOOLBAR, tsize)
 
         tb.SetToolBitmapSize(tsize)
-        
 
         #tb.AddSimpleTool(10, open_bmp, "Open", "Long help for 'Open'")
         tb.AddLabelTool(10, "Open", open_bmp, shortHelp="Open", longHelp="Long help for 'Open'")
         self.Bind(wx.EVT_TOOL, self.openFile, id=10)
-
 
         tb.AddSeparator()
         cbID = wx.NewId()
@@ -100,7 +101,6 @@ class TestToolBar(wx.Frame):
         # causes it to render (more or less, that is).
         tb.Realize()
         self.Show()
-    
 
     def openFile(self, event):
         "Opens File Dialog for choosing media file"
@@ -129,6 +129,7 @@ class TestToolBar(wx.Frame):
           
 
     def pauseFile(self,event):
+	"pauses playing of file, callback for pause button"
         self.player.Pause()
         self.play = wx.BitmapButton(panel, id=-1, bitmap=selfimage1, size = (self.image1.GetWidth()+4, self.image1.GetHeight()+4), style=wx.NO_BORDER)
         self.play.Bind(wx.EVT_BUTTON, self.playFile)
@@ -141,6 +142,9 @@ class TestToolBar(wx.Frame):
         "takes a segment of the audio from time t1 to t2"          
 
 
+#
+# Start of main program
+#
 
 
 app = wx.App(False)
