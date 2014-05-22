@@ -22,3 +22,9 @@ TestContent.py
 TestToolBar.py		- holds the main program
 Transcriber.py
 Utterance.py
+
+
+-------------------------------------------
+TODO:
+ comment everything!
+
