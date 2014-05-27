@@ -8,12 +8,13 @@ import  wx
 import  images
 import wx.media
 import wave
+import  wx.lib.scrolledpanel as scrolled
 
 FRAMETB = True
 TBFLAGS = ( wx.TB_HORIZONTAL			# toolbar arranges icons horizontally
-            | wx.NO_BORDER			# don't show borders
-            | wx.TB_FLAT			# 
-            #| wx.TB_TEXT			# 
+            | wx.NO_BORDER			    # don't show borders
+            | wx.TB_FLAT			    # 
+            #| wx.TB_TEXT			    # 
             #| wx.TB_HORZ_LAYOUT			
             )
 
@@ -25,17 +26,19 @@ class TestToolBar(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, -1, 'Test ToolBar', size=(600, 400))
 
-        self.panel  = wx.Panel(self)
+        self.panel = scrolled.ScrolledPanel(self, -1, size=(350, 50),
+                                 style = wx.TAB_TRAVERSAL|wx.SUNKEN_BORDER, name="panel")
         self.player = wx.media.MediaCtrl(self.panel)
-        self.sizer  = wx.GridBagSizer(hgap=10, vgap=5)
+        sizer = wx.FlexGridSizer(cols=2, vgap=20, hgap=1)
+
+        # Blank Space
+        blank = wx.StaticText(self.panel, size=(100,1))
+        sizer.Add(blank)
 
         # Receive Search Inputs
         tc0 = wx.TextCtrl(self.panel, size=(175, 25))
-        self.sizer.Add(tc0, pos=(0, 2), border=15, span=(1, 1), flag=wx.TOP|wx.LEFT|wx.BOTTOM)
+        sizer.Add(tc0, flag=wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL)
 
-        # Separator Line
-        line = wx.StaticLine(self.panel)
-        self.sizer.Add(line, pos=(3, 0), span=(1, 5),flag=wx.EXPAND|wx.BOTTOM, border=10)
 
         # Play Button Image converted to Bitmap
         imageFile = "button_play.png"
@@ -45,30 +48,59 @@ class TestToolBar(wx.Frame):
         imageFile2 = "button_pause.png"
         self.image2 = wx.Image(imageFile2, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 
-        # Scroller 
-        #scroll = wx.ScrolledWindow(self, -1)
-        #scroll.SetScrollbars(1, 1, 1200, 800)
 
         # Array of 'Play' Bitmap Buttons
-        Play_Array = []
+        self.Play_Array = []
 
         #Array of sliders
-        Slider_Array = []
-        #ScrollBar(parent, pos=(100,100), size=(100,100),
-        #style=SB_HORIZONTAL,name="ScrollBar")
+        self.Slider_Array = []
+
+        self.mainPlay = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1, size = (self.image1.GetWidth()+4, self.image1.GetHeight()+4), style=wx.NO_BORDER)
+        self.mainPlay.Bind(wx.EVT_BUTTON, self.playFile)
+        self.Play_Array.append(self.mainPlay)  
+        sizer.Add(self.mainPlay, wx.ALIGN_RIGHT|wx.RIGHT) 
+        self.mainSlider = wx.Slider(self.panel, wx.ID_ANY, size = (300,-1))
+        self.mainSlider.Bind(wx.EVT_SLIDER,self.Seek) 
+        self.Slider_Array.append(self.mainSlider)
+        sizer.Add(self.mainSlider) 
+
+        blank = wx.StaticText(self.panel, size=(100,1))
+        sizer.Add(blank)
+        font = wx.Font(15, wx.SWISS, wx.NORMAL, wx.NORMAL, False, u'Segoe UI SemiLight')
+        text1 = wx.StaticText(self.panel, label="Search Results")
+        text1.SetFont(font)
+        sizer.Add(text1, wx.ALIGN_CENTER_HORIZONTAL)
+
+
+        # Separator Lines
+        line3 = wx.StaticLine(self.panel)
+        line4 = wx.StaticLine(self.panel)
+        sizer.Add(line3, flag=wx.EXPAND)
+        sizer.Add(line4, flag=wx.EXPAND)
+
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.onTimer)
+        self.timer.Start(10)
+
 
         #for loop that creates sliders and play buttons
         for i in range (10):
             self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1, size = (self.image1.GetWidth()+4, self.image1.GetHeight()+4), style=wx.NO_BORDER)
             self.play.Bind(wx.EVT_BUTTON, self.playFile)
-            Play_Array.append(self.play)  
-            self.sizer.Add(self.play, pos=((i+4), 0), flag=wx.ALIGN_CENTER_VERTICAL) 
+            self.Play_Array.append(self.play)  
+            sizer.Add(self.play, wx.ALIGN_RIGHT|wx.RIGHT) 
             slider = wx.Slider(self.panel, wx.ID_ANY, size = (300,-1))
             slider.Bind(wx.EVT_SLIDER,self.Seek) 
-            Slider_Array.append(slider)
-            self.sizer.Add(slider, pos=((i+4), 2))    
-        self.sizer.AddGrowableCol(2)
-        self.panel.SetSizer(self.sizer)
+            self.Slider_Array.append(slider)
+            sizer.Add(slider)    
+            line_1 = wx.StaticLine(self.panel)
+            line_2 = wx.StaticLine(self.panel)
+            sizer.Add(line_1, flag=wx.EXPAND)
+            sizer.Add(line_2, flag=wx.EXPAND)
+
+        self.panel.SetSizer( sizer )
+        self.panel.SetAutoLayout(1)
+        self.panel.SetupScrolling(scroll_x = False)
 
         if FRAMETB:
             tb = self.CreateToolBar( TBFLAGS )
@@ -114,29 +146,35 @@ class TestToolBar(wx.Frame):
             if not self.player.Load(path):
                 wx.MessageBox("Unable to load this file, it is in the wrong format")
             else:
-                self.player.Play()        
+                self.playFile(self)        
 
     def playFile(self, event):
         "Plays Chosen Media"
         self.player.Play()
+        
         self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image2, size = (self.image2.GetWidth()+4, self.image2.GetHeight()+4), style=wx.NO_BORDER)
         self.play.Bind(wx.EVT_BUTTON, self.pauseFile)
-        self.slider.SetRange(0, self.player.Length())
+        self.Slider_Array[0].SetRange(0, self.player.Length())
         #self.info_length.SetLabel('length: %d seconds' % (self.player.Length()/1000))
         #self.info_name.SetLabel("Name: %s" % (os.path.split(self.path)[1]))
-        self.panel.SetInitialSize()
-        self.SetInitialSize()
+
+    def onTimer(self,event):
+        "The timer for slider"
+        current = self.player.Tell()
+        if (current<0):
+            current=0
+        self.Slider_Array[0].SetValue(current)
           
 
     def pauseFile(self,event):
 	"pauses playing of file, callback for pause button"
         self.player.Pause()
-        self.play = wx.BitmapButton(panel, id=-1, bitmap=selfimage1, size = (self.image1.GetWidth()+4, self.image1.GetHeight()+4), style=wx.NO_BORDER)
+        self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1, size = (self.image1.GetWidth()+4, self.image1.GetHeight()+4), style=wx.NO_BORDER)
         self.play.Bind(wx.EVT_BUTTON, self.playFile)
 
     def Seek(self,event):
         "Seeks in slider"   
-        self.player.Seek(self.slider.GetValue())
+        self.player.Seek(self.Slider_Array[0].GetValue())
 
     def splitFile():
         "takes a segment of the audio from time t1 to t2"          
