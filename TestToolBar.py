@@ -41,11 +41,11 @@ class TestToolBar(wx.Frame):
 
 
         # Play Button Image converted to Bitmap
-        imageFile = "button_play.png"
+        imageFile = "images/button_play.png"
         self.image1 = wx.Image(imageFile, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 
         # Pause Button Image converted to Bitmap
-        imageFile2 = "button_pause.png"
+        imageFile2 = "images/button_pause.png"
         self.image2 = wx.Image(imageFile2, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 
 
