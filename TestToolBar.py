@@ -9,6 +9,7 @@ import  images
 import wx.media
 import wave
 import  wx.lib.scrolledpanel as scrolled
+from pydub import AudioSegment
 
 FRAMETB = True
 TBFLAGS = ( wx.TB_HORIZONTAL			# toolbar arranges icons horizontally
@@ -222,8 +223,18 @@ class TestToolBar(wx.Frame):
         "Seeks in slider"   
         self.player.Seek(self.Slider_Array[0].GetValue())
 
-    def splitFile():
-        "takes a segment of the audio from time t1 to t2"          
+    def splitAudio(a, b):
+        "splits the audio file from t=a to t=b milliseconds"
+        path = "/Users/CardMaster/Desktop/hi.wav"
+        audio = AudioSegment.from_wav("/Users/CardMaster/Dropbox/SMP 2014/background/time-frequency-lab/stimuli_lab/example5.wav")
+        audio_segment = [100]
+        audio_segment[0] = audio[:b]
+        audio_segment[0].export(path, format="wav")
+        audio = AudioSegment.from_wav(path)
+        a = (len(audio)-a)
+        audio_segment[0] = audio[a:]
+        audio_segment[0].export(path, format="wav")
+                  
 
 
 #
