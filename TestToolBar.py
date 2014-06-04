@@ -18,7 +18,7 @@ TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
             #| wx.TB_TEXT			    # 
             #| wx.TB_HORZ_LAYOUT			
 )
-fileOpen = 0
+
 # Array of 'Play' Bitmap Buttons
 Play_Array = []
 
@@ -156,6 +156,9 @@ class TestToolBar(wx.Frame):
 
         tb.AddStretchableSpace()
 
+        # Checks if file has been opened
+        self.fileOpen = 0
+
         # Final thing to do for a toolbar is call the Realize() method. This
         # causes it to render (more or less, that is).
         tb.Realize()
@@ -173,7 +176,7 @@ class TestToolBar(wx.Frame):
         if not self.player.Load(path):
             wx.MessageBox("Unable to load this file, it is in the wrong format")
         else:
-            fileOpen = 1
+            self.fileOpen = 1
             self.playFile(self)
             for i in range(10):
                 Slider_Array[i].Enable()
@@ -182,7 +185,7 @@ class TestToolBar(wx.Frame):
 
     def playFile(self, event):
         "Plays Chosen Media"
-        if fileOpen == 0:
+        if self.fileOpen == 0:
             filenotOpenMessageBox = wx.MessageDialog(None, 'Please choose a file first!', 'Error!', wx.ICON_ERROR)
             filenotOpenMessageBox.ShowModal()
         else:
