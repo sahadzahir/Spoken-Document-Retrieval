@@ -223,6 +223,10 @@ class TestToolBar(wx.Frame):
     def onSearch(self, event):
         query = self.searchBar.GetValue()
         print query
+        if not query == "":
+            filenotOpenMessageBox = wx.MessageDialog(None, 'Please choose a file first!', 'Error!', wx.ICON_ERROR)
+            filenotOpenMessageBox.ShowModal()
+
 
     def pauseFile(self, event):
         "pauses playing of file, callback for pause button"
@@ -248,7 +252,7 @@ class TestToolBar(wx.Frame):
         audio = AudioSegment.from_wav(path)
         a = (len(audio) - a)
         audio_segment[0] = audio[a:]
-        audio_segment[0].export(path, format="wav")  #
+        audio_segment[0].export(path, format="wav")  
 # Start of main program
 #
 
