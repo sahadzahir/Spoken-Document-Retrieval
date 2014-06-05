@@ -102,8 +102,9 @@ class TestToolBar(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.onTimer)
         self.timer.Start(10)
 
-
-        #for loop that creates sliders and play buttons
+        #TRY TO MAKE THIS FUNCTION WORK
+        # self.createSliders(self)
+        # for loop that creates sliders and play buttons
         for i in range(10):
             self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,
                                         size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4),
@@ -207,18 +208,21 @@ class TestToolBar(wx.Frame):
             current = 0
         Slider_Array[0].SetValue(current)
 
-        minute = (current / 1000) / 60
-        seconds = (current / 1000) - (minute * 60)
+        hours  = (current / 1000) / 3600
+        minutes = (current / 1000) / 60 - (hours * 60)
+        seconds = (current / 1000) - (minutes * 60) - (hours*3600)
 
         if (current == self.player.Length()):
             Slider_Array[0].SetValue(0)
-            minute = 0
+            hours = 0
+            minutes = 0
             seconds = 0
 
-        if (seconds < 10):
-            self.mainTime.SetLabel(' %d:0%d ' % (minute, seconds))
+        #Doesnt display as 0:XX:XX when less than an hour has elapsed.
+        if hours<=0:
+            self.mainTime.SetLabel(' %d:%.2d ' % (minutes, seconds))
         else:
-            self.mainTime.SetLabel(' %d:%d ' % (minute, seconds))
+            self.mainTime.SetLabel(' %d:%.2d:%.2d ' %(hours,minutes,seconds))
 
     def onSearch(self, event):
         query = self.searchBar.GetValue()
@@ -248,7 +252,34 @@ class TestToolBar(wx.Frame):
         audio = AudioSegment.from_wav(path)
         a = (len(audio) - a)
         audio_segment[0] = audio[a:]
-        audio_segment[0].export(path, format="wav")  #
+        audio_segment[0].export(path, format="wav")
+
+    #DONT KNOW WHY THIS DOESNT WORK
+
+    # def createSliders(self,number):
+    #     #for loop that creates sliders and play buttons
+    #     for i in range(int(number)):
+    #         self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,
+    #                                     size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4),
+    #                                     style=wx.NO_BORDER)
+    #         self.play.Bind(wx.EVT_BUTTON, self.playFile)
+    #         Play_Array.append(self.play)
+    #         self.sizer.Add(self.play, wx.ALIGN_RIGHT | wx.RIGHT)
+    #         slider = wx.Slider(self.panel, wx.ID_ANY, size=(300, -1))
+    #         slider.Bind(wx.EVT_SLIDER, self.Seek)
+    #         slider.Disable()
+    #         Slider_Array.append(slider)
+    #         self.sizer.Add(slider)
+    #         blank_4 = wx.StaticText(self.panel, label="0:00")
+    #         self.sizer.Add(blank_4)
+    #         line_1 = wx.StaticLine(self.panel)
+    #         line_2 = wx.StaticLine(self.panel)
+    #         line_3 = wx.StaticLine(self.panel)
+    #         self.sizer.Add(line_1, flag=wx.EXPAND)
+    #         self.sizer.Add(line_2, flag=wx.EXPAND)
+    #         self.sizer.Add(line_3, flag=wx.EXPAND)
+
+#
 # Start of main program
 #
 
