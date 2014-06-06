@@ -55,7 +55,7 @@ class TestToolBar(wx.Frame):
 
         self.mainPlay = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,
                                         size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4),
-                                        style=wx.NO_BORDER)
+                                        style=wx.NO_BORDER, name = "0")
         self.mainPlay.Bind(wx.EVT_BUTTON, self.playFile)
         Play_Array.append(self.mainPlay)
         self.sizer.Add(self.mainPlay, wx.ALIGN_RIGHT | wx.RIGHT)
@@ -104,11 +104,12 @@ class TestToolBar(wx.Frame):
 
         #TRY TO MAKE THIS FUNCTION WORK
         # self.createSliders(self)
+
         # for loop that creates sliders and play buttons
         for i in range(10):
             self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,
                                         size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4),
-                                        style=wx.NO_BORDER)
+                                        style=wx.NO_BORDER,name=""+str(i))
             self.play.Bind(wx.EVT_BUTTON, self.playFile)
             Play_Array.append(self.play)
             self.sizer.Add(self.play, wx.ALIGN_RIGHT | wx.RIGHT)
@@ -178,7 +179,7 @@ class TestToolBar(wx.Frame):
             wx.MessageBox("Unable to load this file, it is in the wrong format")
         else:
             self.fileOpen = 1
-            self.playFile(self)
+            #self.playFile(self)
             for i in range(10):
                 Slider_Array[i].Enable()
             self.mainSlider.Enable()
@@ -190,11 +191,15 @@ class TestToolBar(wx.Frame):
             filenotOpenMessageBox = wx.MessageDialog(None, 'Please choose a file first!', 'Error!', wx.ICON_ERROR)
             filenotOpenMessageBox.ShowModal()
         else:
+            sourcenum = int(event.GetEventObject().GetName())
+            source = Play_Array[sourcenum]
+            source.SetBitmap(self.image2)
             self.player.Play()
-            self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image2,
-                                        size=(self.image2.GetWidth() + 4, self.image2.GetHeight() + 4),
-                                        style=wx.NO_BORDER)
-            self.play.Bind(wx.EVT_BUTTON, self.pauseFile)
+
+            # self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image2,
+            #                             size=(self.image2.GetWidth() + 4, self.image2.GetHeight() + 4),
+            #                             style=wx.NO_BORDER)
+            source.Bind(wx.EVT_BUTTON, self.pauseFile)
             Slider_Array[0].SetRange(0, self.player.Length())
             #self.info_length.SetLabel('length: %d seconds' % (self.player.Length()/1000))
             #self.info_name.SetLabel("Name: %s" % (os.path.split(self.path)[1]))
@@ -234,10 +239,12 @@ class TestToolBar(wx.Frame):
 
     def pauseFile(self, event):
         "pauses playing of file, callback for pause button"
-
+        sourcenum = int(event.GetEventObject().GetName())
+        source = Play_Array[sourcenum]
         self.player.Pause()
-        self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4), style=wx.NO_BORDER)
-        self.play.Bind(wx.EVT_BUTTON, self.playFile)
+        #self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4), style=wx.NO_BORDER)
+        source.SetBitmap(self.image1)
+        source.Bind(wx.EVT_BUTTON, self.playFile)
 
 
     def Seek(self, event):
