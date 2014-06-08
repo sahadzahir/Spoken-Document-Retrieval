@@ -23,7 +23,11 @@ TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
 Play_Array = []
 
 #Array of sliders
-Slider_Array = []  #---------------------------------------------------------------------------
+Slider_Array = []
+
+#Keeps track of the number of sliders
+numberOfSliders = 0
+#---------------------------------------------------------------------------
 
 
 class TestToolBar(wx.Frame):
@@ -34,6 +38,7 @@ class TestToolBar(wx.Frame):
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, -1, 'Test ToolBar', size=(600, 400))
+
 
         self.panel = scrolled.ScrolledPanel(self, -1, size=(350, 50),
                                             style=wx.TAB_TRAVERSAL | wx.SUNKEN_BORDER, name="panel")
@@ -102,30 +107,8 @@ class TestToolBar(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.onTimer)
         self.timer.Start(10)
 
-        #TRY TO MAKE THIS FUNCTION WORK
-        # self.createSliders(self)
-
-        # for loop that creates sliders and play buttons
-        for i in range(10):
-            self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,
-                                        size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4),
-                                        style=wx.NO_BORDER,name=""+str(i))
-            self.play.Bind(wx.EVT_BUTTON, self.playFile)
-            Play_Array.append(self.play)
-            self.sizer.Add(self.play, wx.ALIGN_RIGHT | wx.RIGHT)
-            slider = wx.Slider(self.panel, wx.ID_ANY, size=(300, -1))
-            slider.Bind(wx.EVT_SLIDER, self.Seek)
-            slider.Disable()
-            Slider_Array.append(slider)
-            self.sizer.Add(slider)
-            blank_4 = wx.StaticText(self.panel, label="0:00")
-            self.sizer.Add(blank_4)
-            line_1 = wx.StaticLine(self.panel)
-            line_2 = wx.StaticLine(self.panel)
-            line_3 = wx.StaticLine(self.panel)
-            self.sizer.Add(line_1, flag=wx.EXPAND)
-            self.sizer.Add(line_2, flag=wx.EXPAND)
-            self.sizer.Add(line_3, flag=wx.EXPAND)
+        #Creates sliders and their buttons, argument is the number of sliders to create
+        self.createSliders(2)
 
         self.panel.SetSizer(self.sizer)
         self.panel.SetAutoLayout(1)
@@ -180,7 +163,7 @@ class TestToolBar(wx.Frame):
         else:
             self.fileOpen = 1
             #self.playFile(self)
-            for i in range(10):
+            for i in range(1,numberOfSliders+1):
                 Slider_Array[i].Enable()
             self.mainSlider.Enable()
 
@@ -267,28 +250,30 @@ class TestToolBar(wx.Frame):
 
     #DONT KNOW WHY THIS DOESNT WORK
 
-    # def createSliders(self,number):
-    #     #for loop that creates sliders and play buttons
-    #     for i in range(int(number)):
-    #         self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,
-    #                                     size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4),
-    #                                     style=wx.NO_BORDER)
-    #         self.play.Bind(wx.EVT_BUTTON, self.playFile)
-    #         Play_Array.append(self.play)
-    #         self.sizer.Add(self.play, wx.ALIGN_RIGHT | wx.RIGHT)
-    #         slider = wx.Slider(self.panel, wx.ID_ANY, size=(300, -1))
-    #         slider.Bind(wx.EVT_SLIDER, self.Seek)
-    #         slider.Disable()
-    #         Slider_Array.append(slider)
-    #         self.sizer.Add(slider)
-    #         blank_4 = wx.StaticText(self.panel, label="0:00")
-    #         self.sizer.Add(blank_4)
-    #         line_1 = wx.StaticLine(self.panel)
-    #         line_2 = wx.StaticLine(self.panel)
-    #         line_3 = wx.StaticLine(self.panel)
-    #         self.sizer.Add(line_1, flag=wx.EXPAND)
-    #         self.sizer.Add(line_2, flag=wx.EXPAND)
-    #         self.sizer.Add(line_3, flag=wx.EXPAND)
+    def createSliders(self,number):
+        numberOfSliders.__add__(number)
+        #for loop that creates sliders and play buttons
+        for i in range(1,number+1):
+            self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,
+                                        size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4),
+                                        style=wx.NO_BORDER,
+                                        name = str(i))
+            self.play.Bind(wx.EVT_BUTTON, self.playFile)
+            Play_Array.append(self.play)
+            self.sizer.Add(self.play, wx.ALIGN_RIGHT | wx.RIGHT)
+            slider = wx.Slider(self.panel, wx.ID_ANY, size=(300, -1))
+            slider.Bind(wx.EVT_SLIDER, self.Seek)
+            slider.Disable()
+            Slider_Array.append(slider)
+            self.sizer.Add(slider)
+            blank_4 = wx.StaticText(self.panel, label="0:00")
+            self.sizer.Add(blank_4)
+            line_1 = wx.StaticLine(self.panel)
+            line_2 = wx.StaticLine(self.panel)
+            line_3 = wx.StaticLine(self.panel)
+            self.sizer.Add(line_1, flag=wx.EXPAND)
+            self.sizer.Add(line_2, flag=wx.EXPAND)
+            self.sizer.Add(line_3, flag=wx.EXPAND)
 
 #
 # Start of main program
