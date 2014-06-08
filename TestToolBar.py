@@ -180,15 +180,13 @@ class TestToolBar(wx.Frame):
             sourcenum = int(event.GetEventObject().GetName())
             source = Play_Array[sourcenum]
             source.SetBitmap(self.image2)
-            self.player.Play()
-
-            # self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image2,
-            #                             size=(self.image2.GetWidth() + 4, self.image2.GetHeight() + 4),
-            #                             style=wx.NO_BORDER)
             source.Bind(wx.EVT_BUTTON, self.pauseFile)
-            Slider_Array[0].SetRange(0, self.player.Length())
-            #self.info_length.SetLabel('length: %d seconds' % (self.player.Length()/1000))
-            #self.info_name.SetLabel("Name: %s" % (os.path.split(self.path)[1]))
+
+            if sourcenum == 0:
+                self.player.Play()
+                Slider_Array[0].SetRange(0, self.player.Length())
+                #self.info_length.SetLabel('length: %d seconds' % (self.player.Length()/1000))
+                #self.info_name.SetLabel("Name: %s" % (os.path.split(self.path)[1]))
 
 
     def onTimer(self, event):
@@ -227,10 +225,13 @@ class TestToolBar(wx.Frame):
         "pauses playing of file, callback for pause button"
         sourcenum = int(event.GetEventObject().GetName())
         source = Play_Array[sourcenum]
-        self.player.Pause()
-        #self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4), style=wx.NO_BORDER)
         source.SetBitmap(self.image1)
         source.Bind(wx.EVT_BUTTON, self.playFile)
+
+        if sourcenum==0:
+            self.player.Pause()
+
+
 
 
     def Seek(self, event):
@@ -251,7 +252,7 @@ class TestToolBar(wx.Frame):
         audio_segment[0] = audio[a:]
         audio_segment[0].export(path, format="wav")  
 
-    #DONT KNOW WHY THIS DOESNT WORK
+
 
     def createSliders(self,number):
         numberOfSliders.__add__(number)
