@@ -9,7 +9,7 @@ import images
 import wx.media
 import wave
 import wx.lib.scrolledpanel as scrolled
-#from pydub import AudioSegment
+# from pydub import AudioSegment
 
 FRAMETB = True
 TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
@@ -58,6 +58,8 @@ class TestToolBar(wx.Frame):
         imageFile3 = "images/button_search.png"
         self.image3 = wx.Image(imageFile3, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 
+
+        #Creates the main slider and play button
         self.mainPlay = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,
                                         size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4),
                                         style=wx.NO_BORDER, name = "0")
@@ -129,13 +131,14 @@ class TestToolBar(wx.Frame):
         open_bmp = wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_TOOLBAR, tsize)
         copy_bmp = wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_TOOLBAR, tsize)
         paste_bmp = wx.ArtProvider.GetBitmap(wx.ART_PASTE, wx.ART_TOOLBAR, tsize)
+        history_bmp = wx.ArtProvider.GetBitmap(wx.ART_LIST_VIEW,wx.ART_TOOLBAR,tsize)
 
         tb.SetToolBitmapSize(tsize)
 
         #tb.AddSimpleTool(10, open_bmp, "Open", "Long help for 'Open'")
         tb.AddLabelTool(10, "Open", open_bmp, shortHelp="Open", longHelp="Long help for 'Open'")
         self.Bind(wx.EVT_TOOL, self.openFile, id=10)
-
+        recent = tb.AddLabelTool(11,"Recent",shortHelp= "Recent Files",bitmap = history_bmp,longHelp="Opens Recent Files")
         tb.AddSeparator()
         cbID = wx.NewId()
 
