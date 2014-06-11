@@ -154,21 +154,8 @@ class TestToolBar(wx.Frame):
 
     def openFile(self, event):
         "Opens File Dialog for choosing media file"
-        msg = wx.FileDialog(self, message="Open a media file",
-                            style=wx.OPEN,
-                            wildcard="Media Files|*.wma;*.mp3;*.avi;*.wav")
-        if msg.ShowModal() == wx.ID_OK:
-            path = msg.GetPath()
-            self.path = path
-
-        if not self.player.Load(path):
-            wx.MessageBox("Unable to load this file, it is in the wrong format")
-        else:
-            self.fileOpen = 1
-            #self.playFile(self)
-            for i in range(1,numberOfSliders+1):
-                Slider_Array[i].Enable()
-            self.mainSlider.Enable()
+        frame = PopUp()
+        frame.Show()
 
 
     def playFile(self, event):
@@ -278,6 +265,81 @@ class TestToolBar(wx.Frame):
             self.sizer.Add(line_1, flag=wx.EXPAND)
             self.sizer.Add(line_2, flag=wx.EXPAND)
             self.sizer.Add(line_3, flag=wx.EXPAND)
+
+##########################################################################################
+class PopUp(wx.Frame):
+    def __init__(self):
+        wx.Frame.__init__(self, None, title="Info", size=(490,225))
+        self.panel = wx.Panel(self)
+        self.sizer = wx.FlexGridSizer(cols=3, vgap=15, hgap=3)
+        self.lbl1 = wx.StaticText(self.panel, -1, label="Audio Path: ")
+        self.txtctrl1 = wx.TextCtrl(self.panel, -1, size=(300,20))
+        self.browseBtn = wx.Button(self.panel, label="Browse")
+        self.browseBtn.Bind(wx.EVT_BUTTON, self.browseFile)
+
+        self.lbl2 = wx.StaticText(self.panel, -1, label="Date: ")
+        self.txtctrl2 = wx.TextCtrl(self.panel, -1, size=(300,20))
+        self.blank1 = wx.StaticText(self.panel, -1, label="")
+
+        self.lbl3 = wx.StaticText(self.panel, -1, label="Gender: ")
+        self.cb1 = wx.ComboBox(self.panel,choices=["Male", "Female"])
+        self.blank2 = wx.StaticText(self.panel, -1, label="")
+
+        self.lbl4 = wx.StaticText(self.panel, -1, label="Topic: ")
+        self.txtctrl4 = wx.TextCtrl(self.panel, -1, size=(300,20))
+        self.blank3 = wx.StaticText(self.panel, -1, label="")
+
+        self.lbl5 = wx.StaticText(self.panel, -1, label="Subject: ")
+        self.txtctrl5 = wx.TextCtrl(self.panel, -1, size=(300,20))
+        self.blank4 = wx.StaticText(self.panel, -1, label="")
+
+        self.blank5 = wx.StaticText(self.panel, -1, label="")
+        self.okBtn = wx.Button(self.panel, label="Ok")
+        self.okBtn.Bind(wx.EVT_BUTTON, self.onSubmit)
+        self.blank6 = wx.StaticText(self.panel, -1, label="")
+
+        self.sizer.Add(self.lbl1)
+        self.sizer.Add(self.txtctrl1)
+        self.sizer.Add(self.browseBtn)
+        self.sizer.Add(self.lbl2)
+        self.sizer.Add(self.txtctrl2)
+        self.sizer.Add(self.blank1)
+        self.sizer.Add(self.lbl4)
+        self.sizer.Add(self.txtctrl4)
+        self.sizer.Add(self.blank3)
+        self.sizer.Add(self.lbl5)
+        self.sizer.Add(self.txtctrl5)
+        self.sizer.Add(self.blank4)
+        self.sizer.Add(self.lbl3)
+        self.sizer.Add(self.cb1)
+        self.sizer.Add(self.blank2)
+        self.sizer.Add(self.blank5)
+        self.sizer.Add(self.okBtn)
+        self.sizer.Add(self.blank6)
+        self.panel.SetSizer(self.sizer)
+
+
+    def browseFile(self, event):
+
+        msg = wx.FileDialog(self, message="Open a media file",
+                           style=wx.OPEN,
+                           wildcard="Media Files|*.wma;*.mp3;*.avi;*.wav")
+        if msg.ShowModal() == wx.ID_OK:
+           path = msg.GetPath()
+           self.path = path
+           self.txtctrl1.SetValue(path)
+
+        if not self.player.Load(path):
+           wx.MessageBox("Unable to load this file, it is in the wrong format")
+        else:
+           self.fileOpen = 1
+           self.playFile(self)
+           for i in range(1,numberOfSliders+1):
+               Slider_Array[i].Enable()
+           self.mainSlider.Enable()
+
+    def onSubmit(self, event):
+        self.Destroy()
 
 #
 # Start of main program
