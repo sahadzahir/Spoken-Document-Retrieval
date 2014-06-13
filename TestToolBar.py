@@ -329,14 +329,15 @@ class PopUp(wx.Frame):
            self.path = path
            self.txtctrl1.SetValue(path)
 
-        if not self.player.Load(path):
+
+        if not TestToolBar.player.Load(path):
            wx.MessageBox("Unable to load this file, it is in the wrong format")
         else:
-           self.fileOpen = 1
-           self.playFile(self)
+           TestToolBar.fileOpen = 1
+           TestToolBar.playFile(self)
            for i in range(1,numberOfSliders+1):
                Slider_Array[i].Enable()
-           self.mainSlider.Enable()
+           TestToolBar.mainSlider.Enable()
 
     def onSubmit(self, event):
         self.Destroy()
