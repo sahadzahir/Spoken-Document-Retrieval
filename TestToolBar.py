@@ -9,7 +9,7 @@ import images
 import wx.media
 import wave
 import wx.lib.scrolledpanel as scrolled
-# from pydub import AudioSegment
+from pydub import AudioSegment
 
 FRAMETB = True
 TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
@@ -154,7 +154,7 @@ class TestToolBar(wx.Frame):
 
     def openFile(self, event):
         "Opens File Dialog for choosing media file"
-        frame = PopUp()
+        frame = PopUp(self)
         frame.Show()
 
 
@@ -183,6 +183,9 @@ class TestToolBar(wx.Frame):
         if (current < 0):
             current = 0
         Slider_Array[0].SetValue(current)
+
+        if(current == self.player.Length()):
+            Play_Array[0].SetBitmap(self.image1)
 
         hours  = (current / 1000) / 3600
         minutes = (current / 1000) / 60 - (hours * 60)
@@ -266,19 +269,24 @@ class TestToolBar(wx.Frame):
             self.sizer.Add(line_2, flag=wx.EXPAND)
             self.sizer.Add(line_3, flag=wx.EXPAND)
 
+    def getPlayer(self):
+        return self.player
+
 ##########################################################################################
+import Lecture
 class PopUp(wx.Frame):
-    def __init__(self):
-        wx.Frame.__init__(self, None, title="Info", size=(490,225))
+    def __init__(self, myToolBar):
+        self.myToolBar = myToolBar
+        wx.Frame.__init__(self, None, title="Info", size=(490,250))
         self.panel = wx.Panel(self)
         self.sizer = wx.FlexGridSizer(cols=3, vgap=15, hgap=3)
         self.lbl1 = wx.StaticText(self.panel, -1, label="Audio Path: ")
-        self.txtctrl1 = wx.TextCtrl(self.panel, -1, size=(300,20))
+        self.txtctrl1 = wx.TextCtrl(self.panel, -1, size=(300,25))
         self.browseBtn = wx.Button(self.panel, label="Browse")
         self.browseBtn.Bind(wx.EVT_BUTTON, self.browseFile)
 
         self.lbl2 = wx.StaticText(self.panel, -1, label="Date: ")
-        self.txtctrl2 = wx.TextCtrl(self.panel, -1, size=(300,20))
+        self.txtctrl2 = wx.TextCtrl(self.panel, -1, size=(300,25))
         self.blank1 = wx.StaticText(self.panel, -1, label="")
 
         self.lbl3 = wx.StaticText(self.panel, -1, label="Gender: ")
@@ -286,11 +294,11 @@ class PopUp(wx.Frame):
         self.blank2 = wx.StaticText(self.panel, -1, label="")
 
         self.lbl4 = wx.StaticText(self.panel, -1, label="Topic: ")
-        self.txtctrl4 = wx.TextCtrl(self.panel, -1, size=(300,20))
+        self.txtctrl4 = wx.TextCtrl(self.panel, -1, size=(300,25))
         self.blank3 = wx.StaticText(self.panel, -1, label="")
 
         self.lbl5 = wx.StaticText(self.panel, -1, label="Subject: ")
-        self.txtctrl5 = wx.TextCtrl(self.panel, -1, size=(300,20))
+        self.txtctrl5 = wx.TextCtrl(self.panel, -1, size=(300,25))
         self.blank4 = wx.StaticText(self.panel, -1, label="")
 
         self.blank5 = wx.StaticText(self.panel, -1, label="")
@@ -329,18 +337,27 @@ class PopUp(wx.Frame):
            self.path = path
            self.txtctrl1.SetValue(path)
 
-
-        if not TestToolBar.player.Load(path):
+        if not self.myToolBar.player.Load(path):
            wx.MessageBox("Unable to load this file, it is in the wrong format")
         else:
-           TestToolBar.fileOpen = 1
-           TestToolBar.playFile(self)
+           self.myToolBar.fileOpen = 1
+           self.myToolBar.playFile()
            for i in range(1,numberOfSliders+1):
                Slider_Array[i].Enable()
-           TestToolBar.mainSlider.Enable()
+           self.myToolBar.mainSlider.Enable()
 
     def onSubmit(self, event):
-        self.Destroy()
+        if(self.txtctrl1.GetValue() == '' or self.txtctrl2.GetValue() == '' or self.txtctrl4.GetValue() == '' or self.txtctrl5.GetValue() == ''):
+            fillBlanksMessageBox = wx.MessageDialog(None, 'Please fill in all blanks!', 'Error!', wx.ICON_ERROR)
+            fillBlanksMessageBox.ShowModal()
+        else:
+            lecture = Lecture.Lecture()
+            lecture.setFilePath(self.txtctrl1.GetValue())
+            lecture.setDate(self.txtctrl2.GetValue())
+            lecture.setGender(self.cb1.GetValue())
+            lecture.setTopic(self.txtctrl4.GetValue())
+            lecture.setSubject(self.txtctrl5.GetValue())
+            self.Destroy()
 
 #
 # Start of main program

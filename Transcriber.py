@@ -3,5 +3,5 @@ import wx
 
 class Transcriber():
 
-	def Transcribe(Audio):
+	def Transcribe(Lecture):
 		return "This is not yet complete"

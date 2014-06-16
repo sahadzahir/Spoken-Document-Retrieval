@@ -11,7 +11,7 @@ class Lecture():
 	Subject=""
 	filePath=""
 	Gender=""
-	Date=date() #Default date
+	Date=""
 
 
 	def __init__(self):
