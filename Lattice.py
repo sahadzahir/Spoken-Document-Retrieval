@@ -2,18 +2,10 @@ import wx
 import numbers
 import Edge
 
-#
-# nodelbl1 = []
-# nodelbl2 = []
-# worldlbl = []
-# latticeID = []
-# langModelScore = []
-# acousticModelScore = []
-# frameAlignment = []
 
 
 edgeList = []
-
+invertedIndex = {}
 class Lattice():
     # -- TOFIX : What data structure should you use for this - BP
 
@@ -61,6 +53,10 @@ class Lattice():
             i += 1
             edge = Edge.Edge(nodelbl1,nodelbl2,wordlbl,latticeID,langModelScore,acousticModelScore,frameAlignment)
             self.edgeList.append(edge)
+            if not invertedIndex.has_key(wordlbl):
+                invertedIndex[wordlbl] = []
+            invertedIndex[wordlbl].append(j)
+            j += 1
         fo.close()
 
 
