@@ -9,15 +9,14 @@ import images
 import wx.media
 import wave
 import wx.lib.scrolledpanel as scrolled
+import Lattice
 from pydub import AudioSegment
 
 FRAMETB = True
 TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
             | wx.NO_BORDER  # don't show borders
             | wx.TB_FLAT  #
-            #| wx.TB_TEXT			    # 
-            #| wx.TB_HORZ_LAYOUT			
-)
+           )
 
 # Array of 'Play' Bitmap Buttons
 Play_Array = []
@@ -25,16 +24,14 @@ Play_Array = []
 #Array of sliders
 Slider_Array = []
 
-#Keeps track of the number of sliders
-numberOfSliders = 0
 #---------------------------------------------------------------------------
 
+lecture = None
 
 class TestToolBar(wx.Frame):
     "Creates UI for Program"
 
     query = ""
-
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, -1, 'Test ToolBar', size=(600, 400))
@@ -57,6 +54,7 @@ class TestToolBar(wx.Frame):
         # Search Button Image converted to Bitmap
         imageFile3 = "images/button_search.png"
         self.image3 = wx.Image(imageFile3, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+
 
 
         #Creates the main slider and play button
@@ -109,9 +107,6 @@ class TestToolBar(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.onTimer)
         self.timer.Start(10)
 
-        #Creates sliders and their buttons, argument is the number of sliders to create
-        self.createSliders(2)
-
         self.panel.SetSizer(self.sizer)
         self.panel.SetAutoLayout(1)
         self.panel.SetupScrolling(scroll_x=False)
@@ -125,12 +120,8 @@ class TestToolBar(wx.Frame):
             client.SetSizer(sizer)
 
         self.CreateStatusBar()
-
         tsize = (24, 24)
-        new_bmp = wx.ArtProvider.GetBitmap(wx.ART_NEW, wx.ART_TOOLBAR, tsize)
         open_bmp = wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_TOOLBAR, tsize)
-        copy_bmp = wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_TOOLBAR, tsize)
-        paste_bmp = wx.ArtProvider.GetBitmap(wx.ART_PASTE, wx.ART_TOOLBAR, tsize)
         history_bmp = wx.ArtProvider.GetBitmap(wx.ART_LIST_VIEW,wx.ART_TOOLBAR,tsize)
 
         tb.SetToolBitmapSize(tsize)
@@ -157,7 +148,6 @@ class TestToolBar(wx.Frame):
         frame = PopUp(self)
         frame.Show()
 
-
     def playFile(self, event):
         "Plays Chosen Media"
         if self.fileOpen == 0:
@@ -174,7 +164,6 @@ class TestToolBar(wx.Frame):
                 Slider_Array[0].SetRange(0, self.player.Length())
                 #self.info_length.SetLabel('length: %d seconds' % (self.player.Length()/1000))
                 #self.info_name.SetLabel("Name: %s" % (os.path.split(self.path)[1]))
-
 
     def onTimer(self, event):
         "The timer for slider"
@@ -205,10 +194,18 @@ class TestToolBar(wx.Frame):
 
     def onSearch(self, event):
         query = self.searchBar.GetValue()
-        print query
-        if not query == "":
-            filenotOpenMessageBox = wx.MessageDialog(None, 'Please choose a file first!', 'Error!', wx.ICON_ERROR)
-            filenotOpenMessageBox.ShowModal()
+        # print query
+        # if not query == "":
+        #     filenotOpenMessageBox = wx.MessageDialog(None, 'Please choose a file first!', 'Error!', wx.ICON_ERROR)
+        #     filenotOpenMessageBox.ShowModal()
+
+
+        #lattice = lecture.getLattice()            This is what the actual code should be like
+
+        lattice = Lattice.Lattice()             # This is just
+        lattice.parseFile("lattice.txt")        # for testing
+        if lattice.getInvertedIndex().has_key(query):
+            self.createSliders(len(lattice.getInvertedIndex()[query]))
 
 
     def pauseFile(self, event):
@@ -221,13 +218,9 @@ class TestToolBar(wx.Frame):
         if sourcenum==0:
             self.player.Pause()
 
-
-
-
     def Seek(self, event):
         "Seeks in slider"
         self.player.Seek(Slider_Array[0].GetValue())
-
 
     def splitAudio(a, b):
         "splits the audio file from t=a to t=b milliseconds"
@@ -242,16 +235,21 @@ class TestToolBar(wx.Frame):
         audio_segment[0] = audio[a:]
         audio_segment[0].export(path, format="wav")  
 
-
-
     def createSliders(self,number):
-        numberOfSliders.__add__(number)
+        for p in range (len(Slider_Array)):
+            Slider_Array[p].Destroy()
+            Play_Array[p].Destroy()
+
+
         #for loop that creates sliders and play buttons
         for i in range(1,number+1):
             self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,
                                         size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4),
                                         style=wx.NO_BORDER,
-                                        name = str(i))
+                                        name = str(i),
+                                        pos=(20,170+i*50)
+            )
+
             self.play.Bind(wx.EVT_BUTTON, self.playFile)
             Play_Array.append(self.play)
             self.sizer.Add(self.play, wx.ALIGN_RIGHT | wx.RIGHT)
@@ -326,7 +324,6 @@ class PopUp(wx.Frame):
         self.sizer.Add(self.blank6)
         self.panel.SetSizer(self.sizer)
 
-
     def browseFile(self, event):
 
         msg = wx.FileDialog(self, message="Open a media file",
@@ -351,18 +348,23 @@ class PopUp(wx.Frame):
             fillBlanksMessageBox = wx.MessageDialog(None, 'Please fill in all blanks!', 'Error!', wx.ICON_ERROR)
             fillBlanksMessageBox.ShowModal()
         else:
-            lecture = Lecture.Lecture()
-            lecture.setFilePath(self.txtctrl1.GetValue())
-            lecture.setDate(self.txtctrl2.GetValue())
-            lecture.setGender(self.cb1.GetValue())
-            lecture.setTopic(self.txtctrl4.GetValue())
-            lecture.setSubject(self.txtctrl5.GetValue())
+            self.lecture = Lecture.Lecture()
+            self.lecture.setFilePath(self.txtctrl1.GetValue())
+            self.lecture.setDate(self.txtctrl2.GetValue())
+            self.lecture.setGender(self.cb1.GetValue())
+            self.lecture.setTopic(self.txtctrl4.GetValue())
+            self.lecture.setSubject(self.txtctrl5.GetValue())
             self.Destroy()
+
+
+
+
+
+
 
 #
 # Start of main program
 #
-
 
 app = wx.App(False)
 frame = TestToolBar(parent=None)

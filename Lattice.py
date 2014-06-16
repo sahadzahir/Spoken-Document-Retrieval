@@ -2,16 +2,18 @@ import wx
 import numbers
 import Edge
 
-
-
-edgeList = []
-invertedIndex = {}
 class Lattice():
-    # -- TOFIX : What data structure should you use for this - BP
+
+    edgeList = []
+    invertedIndex = {}
+
 
     def __init__(self):
-        self.edgeList = []
-
+        pass
+    def getEdgeList(self):
+        return self.edgeList
+    def getInvertedIndex(self):
+        return self.invertedIndex
     def parseFile(self, name):
         "Parses lattice file and stores data"
         i = 0
@@ -52,16 +54,22 @@ class Lattice():
                     # frameAlignment is a 2d list
             i += 1
             edge = Edge.Edge(nodelbl1,nodelbl2,wordlbl,latticeID,langModelScore,acousticModelScore,frameAlignment)
+            #print edge.toString()
             self.edgeList.append(edge)
-            if not invertedIndex.has_key(wordlbl):
-                invertedIndex[wordlbl] = []
-            invertedIndex[wordlbl].append(j)
+            if not self.invertedIndex.has_key(wordlbl):
+                self.invertedIndex[wordlbl] = []
+            self.invertedIndex[wordlbl].append(j)
             j += 1
         fo.close()
 
 
+# lattice = Lattice()
+# lattice.parseFile("lattice.txt")
+# print lattice.getEdgeList()[33].toString()
+# print lattice.getInvertedIndex()
 
 
 
-	
+
+
 
