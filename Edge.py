@@ -19,3 +19,5 @@ class Edge():
         self.acousticModelScore = amscore
         self.frameAlignment = alignment
 
+    def toString(self):
+        return ""+str(self.nodelbl1) + str(self.nodelbl2) + str(self.wordlbl) + str(self.latticeID) + str(self.langModelScore) + str(self.acousticModelScore) + str(self.frameAlignment)
