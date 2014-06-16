@@ -342,7 +342,6 @@ class PopUp(wx.Frame):
                     wx.MessageBox("Unable to load this file, it is in the wrong format")
                 else:
                     self.myToolBar.fileOpen = 1
-                    self.myToolBar.playFile()
                     for i in range(1,numberOfSliders+1):
                         Slider_Array[i].Enable()
                     self.myToolBar.mainSlider.Enable()
