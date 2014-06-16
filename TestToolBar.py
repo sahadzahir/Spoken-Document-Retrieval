@@ -333,18 +333,19 @@ class PopUp(wx.Frame):
                            style=wx.OPEN,
                            wildcard="Media Files|*.wma;*.mp3;*.avi;*.wav")
         if msg.ShowModal() == wx.ID_OK:
-           path = msg.GetPath()
-           self.path = path
-           self.txtctrl1.SetValue(path)
+            if not msg.GetPath == '' :
+                path = msg.GetPath()
+                self.path = path
+                self.txtctrl1.SetValue(path)
 
-        if not self.myToolBar.player.Load(path):
-           wx.MessageBox("Unable to load this file, it is in the wrong format")
-        else:
-           self.myToolBar.fileOpen = 1
-           self.myToolBar.playFile()
-           for i in range(1,numberOfSliders+1):
-               Slider_Array[i].Enable()
-           self.myToolBar.mainSlider.Enable()
+                if not self.myToolBar.player.Load(path):
+                    wx.MessageBox("Unable to load this file, it is in the wrong format")
+                else:
+                    self.myToolBar.fileOpen = 1
+                    self.myToolBar.playFile()
+                    for i in range(1,numberOfSliders+1):
+                        Slider_Array[i].Enable()
+                    self.myToolBar.mainSlider.Enable()
 
     def onSubmit(self, event):
         if(self.txtctrl1.GetValue() == '' or self.txtctrl2.GetValue() == '' or self.txtctrl4.GetValue() == '' or self.txtctrl5.GetValue() == ''):
