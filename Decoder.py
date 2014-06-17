@@ -19,9 +19,9 @@ class Decoder():
 		tar = tarfile.open( "compressedAudio/"+"compressedAudio.tar.gz", "w:gz" )
 		tar.add("audio/")
 		tar.close()
-		fileList = os.listdir(os.path.abspath("audio/"))
-		for fileName in fileList:
-			os.remove(os.path.abspath("audio/")+"/"+fileName)
+		#fileList = os.listdir(os.path.abspath("audio/"))
+		#for fileName in fileList:
+		#	os.remove(os.path.abspath("audio/")+"/"+fileName)
 
 		#Deletes all the segmented audio from audio/ after gzip
 

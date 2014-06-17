@@ -166,7 +166,7 @@ if __name__ == '__main__':
         else: 
             events = myvad.DoVad(samples)
             for framestamp,evt in events:
-                time=framestamp*0.01
+                time=framestamp*0.01 # Time in seconds
                 print "%.3f " % time,
                 if evt == VAD.SPSTART:
                     print " SPEECH START "
