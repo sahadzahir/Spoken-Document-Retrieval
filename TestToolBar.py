@@ -12,6 +12,7 @@ import wx.lib.scrolledpanel as scrolled
 import Lattice
 from pydub import AudioSegment
 from random import randint
+import time
 
 FRAMETB = True
 TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
@@ -42,7 +43,6 @@ class TestToolBar(wx.Frame):
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, -1, 'Test ToolBar', size=(600, 400))
-
 
         self.panel = scrolled.ScrolledPanel(self, -1, size=(350, 50),
                                             style=wx.TAB_TRAVERSAL | wx.SUNKEN_BORDER, name="panel")
@@ -260,8 +260,8 @@ class TestToolBar(wx.Frame):
         for p in range(0, len(Line_Array)):
             Line_Array[p].Hide()
 
-
         #for loop that creates sliders and play buttons
+
         for i in range(1,number+1):
             self.play = wx.BitmapButton(self.panel, id=-1, bitmap=self.image1,
                                         size=(self.image1.GetWidth() + 4, self.image1.GetHeight() + 4),
@@ -288,6 +288,13 @@ class TestToolBar(wx.Frame):
             self.sizer.Add(line_1, flag=wx.EXPAND)
             self.sizer.Add(line_2, flag=wx.EXPAND)
             self.sizer.Add(line_3, flag=wx.EXPAND)
+        self.SetSize((601,401))
+        self.SetSize((600, 400))
+
+        # After search, message dialogue to tell user that search has completed
+        searchCompleteMessageBox = wx.MessageDialog(None, 'Search Complete!', 'Congratulations!', wx.ICON_ERROR)
+        searchCompleteMessageBox.ShowModal()
+
 
 
 ##########################################################################################
