@@ -11,6 +11,7 @@ import wave
 import wx.lib.scrolledpanel as scrolled
 import Lattice
 from pydub import AudioSegment
+from random import randint
 
 FRAMETB = True
 TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
@@ -21,8 +22,14 @@ TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
 # Array of 'Play' Bitmap Buttons
 Play_Array = []
 
-#Array of sliders
+# Array of sliders
 Slider_Array = []
+
+# Array of time labels
+Time_Array = []
+
+# Array of static lines
+Line_Array = []
 
 #---------------------------------------------------------------------------
 
@@ -195,17 +202,22 @@ class TestToolBar(wx.Frame):
     def onSearch(self, event):
         query = self.searchBar.GetValue()
         # print query
-        # if not query == "":
-        #     filenotOpenMessageBox = wx.MessageDialog(None, 'Please choose a file first!', 'Error!', wx.ICON_ERROR)
-        #     filenotOpenMessageBox.ShowModal()
+        if self.fileOpen == 0:
+            filenotOpenMessageBox = wx.MessageDialog(None, 'Please choose a file first!', 'Error!', wx.ICON_ERROR)
+            filenotOpenMessageBox.ShowModal()
+        elif query == "" :
+            BlankMessageBox = wx.MessageDialog(None, 'Please enter a search query', 'Error!', wx.ICON_ERROR)
+            BlankMessageBox.ShowModal()
+        else:
+            self.createSliders(randint(2,9)) #For testing purposes we are using random numbers
 
 
         #lattice = lecture.getLattice()            This is what the actual code should be like
 
-        lattice = Lattice.Lattice()             # This is just
-        lattice.parseFile("lattice.txt")        # for testing
-        if lattice.getInvertedIndex().has_key(query):
-            self.createSliders(len(lattice.getInvertedIndex()[query]))
+        #lattice = Lattice.Lattice()             # This is just
+        #lattice.parseFile("lattice.txt")        # for testing
+        #if lattice.getInvertedIndex().has_key(query):
+        #    self.createSliders(len(lattice.getInvertedIndex()[query]))
 
 
     def pauseFile(self, event):
@@ -236,9 +248,17 @@ class TestToolBar(wx.Frame):
         audio_segment[0].export(path, format="wav")  
 
     def createSliders(self,number):
-        for p in range (len(Slider_Array)):
-            Slider_Array[p].Destroy()
-            Play_Array[p].Destroy()
+        "method that creates sliders and play buttons as search results"
+        # multiple for loops that remove previous search results
+        for p in range (1, len(Slider_Array)):
+            Slider_Array[p].Hide()
+            Play_Array[p].Hide()
+
+        for p in range(0, len(Time_Array)):
+            Time_Array[p].Hide()
+
+        for p in range(0, len(Line_Array)):
+            Line_Array[p].Hide()
 
 
         #for loop that creates sliders and play buttons
@@ -259,16 +279,16 @@ class TestToolBar(wx.Frame):
             Slider_Array.append(slider)
             self.sizer.Add(slider)
             blank_4 = wx.StaticText(self.panel, label="0:00")
+            Time_Array.append(blank_4)
             self.sizer.Add(blank_4)
             line_1 = wx.StaticLine(self.panel)
             line_2 = wx.StaticLine(self.panel)
             line_3 = wx.StaticLine(self.panel)
+            Line_Array.extend([line_1, line_2, line_3])
             self.sizer.Add(line_1, flag=wx.EXPAND)
             self.sizer.Add(line_2, flag=wx.EXPAND)
             self.sizer.Add(line_3, flag=wx.EXPAND)
 
-    def getPlayer(self):
-        return self.player
 
 ##########################################################################################
 import Lecture
@@ -339,8 +359,8 @@ class PopUp(wx.Frame):
                     wx.MessageBox("Unable to load this file, it is in the wrong format")
                 else:
                     self.myToolBar.fileOpen = 1
-                    for i in range(1,numberOfSliders+1):
-                        Slider_Array[i].Enable()
+                    #for i in range(1,numberOfSliders+1):
+                    Slider_Array[0].Enable()
                     self.myToolBar.mainSlider.Enable()
 
     def onSubmit(self, event):
