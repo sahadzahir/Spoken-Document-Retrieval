@@ -24,7 +24,7 @@ class VAD:
         self.threshold=0
         self.frame_size = 400    # please tune these defaults accordingly
         self.frame_step = 160
-        self.threshold = 200
+        self.threshold = 2500
         self.hangover_threshold = 50   # 50 frame for short segments
         self.buffer = []
         self.frame_cnt = -1
@@ -44,7 +44,8 @@ class VAD:
         energy = math.sqrt(sum(map(lambda(x): x*x, frame))/float(len(frame)))
         self.frame_energy = energy
         #print "%i %f" % (self.frame_cnt,self.frame_energy)
-        if energy>self.threshold: return True
+        if energy>self.threshold:
+            return True
 
     def CheckState(self,isSpeechFrame):
         "update the state machine for the VAD, returning events if detected"
@@ -138,7 +139,7 @@ if __name__ == '__main__':
     # open file, read block by block 
     # in_snd_file = sys.argv[1]
     # fin = open(in_snd_file,'rb')
-    fin = open('doc/example5.wav','rb')
+    fin = open(os.path.abspath("C:\Users\oem\Desktop\hi.wav"),'rb')
     fin.read(44)
     block = fin.read(4000)
 
