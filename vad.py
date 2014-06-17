@@ -22,18 +22,18 @@ class VAD:
 
     def __init__(self):
         self.threshold=0
-        self.frame_size = 400;    # please tune these defaults accordingly
-        self.frame_step = 160;
-        self.threshold = 300;
-        self.hangover_threshold = 50;   # 50 frame for short segments
+        self.frame_size = 400    # please tune these defaults accordingly
+        self.frame_step = 160
+        self.threshold = 200
+        self.hangover_threshold = 50   # 50 frame for short segments
         self.buffer = []
-        self.frame_cnt = -1;
+        self.frame_cnt = -1
         self.Init()
 
     def Init(self):
         "Initializes the VAD"
         self.state =  VAD.STATE_SIL
-        self.frame_cnt = -1;
+        self.frame_cnt = -1
         self.cdata = [] 
 
     def ProcessFrame(self,frame):
@@ -131,14 +131,15 @@ if __name__ == '__main__':
     # test the vad against a file
     myvad = VAD()
 
-    if len(sys.argv)<2:
-        print __doc__
-        sys.exit(1)
+    # if len(sys.argv)<2:
+    #     print __doc__
+    #     sys.exit(1)
 
     # open file, read block by block 
-    in_snd_file = sys.argv[1]
-    fin = open(in_snd_file,'rb')
-    fin.read(44) 
+    # in_snd_file = sys.argv[1]
+    # fin = open(in_snd_file,'rb')
+    fin = open('doc/example5.wav','rb')
+    fin.read(44)
     block = fin.read(4000)
 
     totsum = 0
@@ -155,10 +156,10 @@ if __name__ == '__main__':
                 totsum = totsum +len(chunk)
                 if isEnd: 
                     chunk_cnt = chunk_cnt+1
-                    fout=open(vad_out_template % chunk_cnt,'wb')
-                    for sample in curr_chunk: 
-                        fout.write(struct.pack('=h',sample))
-                    fout.close()
+                    # fout=open(vad_out_template % chunk_cnt,'wb')
+                    # for sample in curr_chunk:
+                    #     fout.write(struct.pack('=h',sample))
+                    # fout.close()
 
                     print "samples: %i len: %.3f" % (totsum, totsum/16000.0)
                     curr_chunk = []
@@ -174,5 +175,3 @@ if __name__ == '__main__':
                     print " SPEECH END "
 
         block = fin.read(4000)
-        
-        
