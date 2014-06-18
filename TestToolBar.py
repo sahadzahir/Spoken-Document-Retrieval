@@ -13,6 +13,7 @@ import Lattice
 from pydub import AudioSegment
 from random import randint
 import time
+import os
 
 FRAMETB = True
 TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
@@ -32,6 +33,12 @@ Time_Array = []
 # Array of static lines
 Line_Array = []
 
+# Array of media ctrls
+Media_Array = []
+
+# Array of Timers
+Timer_Array = []
+
 #---------------------------------------------------------------------------
 
 lecture = None
@@ -47,6 +54,7 @@ class TestToolBar(wx.Frame):
         self.panel = scrolled.ScrolledPanel(self, -1, size=(350, 50),
                                             style=wx.TAB_TRAVERSAL | wx.SUNKEN_BORDER, name="panel")
         self.player = wx.media.MediaCtrl(self.panel)
+        Media_Array.append(self.player)
         self.sizer = wx.FlexGridSizer(cols=3, vgap=20, hgap=1)
 
 
@@ -71,12 +79,13 @@ class TestToolBar(wx.Frame):
         self.mainPlay.Bind(wx.EVT_BUTTON, self.playFile)
         Play_Array.append(self.mainPlay)
         self.sizer.Add(self.mainPlay, wx.ALIGN_RIGHT | wx.RIGHT)
-        self.mainSlider = wx.Slider(self.panel, wx.ID_ANY, size=(300, -1))
+        self.mainSlider = wx.Slider(self.panel, wx.ID_ANY, size=(300, -1), name="0")
         self.mainSlider.Bind(wx.EVT_SLIDER, self.Seek)
         self.mainSlider.Disable()
         Slider_Array.append(self.mainSlider)
         self.sizer.Add(self.mainSlider)
         self.mainTime = wx.StaticText(self.panel, label="0:00")
+        Time_Array.append(self.mainTime)
         self.sizer.Add(self.mainTime)
 
         blank_1 = wx.StaticText(self.panel, size=(100, 1))
@@ -86,6 +95,7 @@ class TestToolBar(wx.Frame):
         self.searchBar = wx.SearchCtrl(self.panel, size=(200, -1), style=wx.TE_PROCESS_ENTER)
         self.searchBar.ShowCancelButton(True)
         self.searchBar.ShowSearchButton(True)
+        self.searchBar.SetDescriptiveText("Search")
         self.searchBar.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.onSearch, self.searchBar)
         self.sizer.Add(self.searchBar, flag=wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL)
 
@@ -110,9 +120,10 @@ class TestToolBar(wx.Frame):
         self.sizer.Add(line4, flag=wx.EXPAND)
         self.sizer.Add(line5, flag=wx.EXPAND)
 
-        self.timer = wx.Timer(self)
+        self.timer = wx.Timer(self, id=0)
         self.Bind(wx.EVT_TIMER, self.onTimer)
         self.timer.Start(10)
+        Timer_Array.append(self.timer)
 
         self.panel.SetSizer(self.sizer)
         self.panel.SetAutoLayout(1)
@@ -157,6 +168,7 @@ class TestToolBar(wx.Frame):
 
     def playFile(self, event):
         "Plays Chosen Media"
+
         if self.fileOpen == 0:
             filenotOpenMessageBox = wx.MessageDialog(None, 'Please choose a file first!', 'Error!', wx.ICON_ERROR)
             filenotOpenMessageBox.ShowModal()
@@ -166,38 +178,38 @@ class TestToolBar(wx.Frame):
             source.SetBitmap(self.image2)
             source.Bind(wx.EVT_BUTTON, self.pauseFile)
 
-            if sourcenum == 0:
-                self.player.Play()
-                Slider_Array[0].SetRange(0, self.player.Length())
-                #self.info_length.SetLabel('length: %d seconds' % (self.player.Length()/1000))
-                #self.info_name.SetLabel("Name: %s" % (os.path.split(self.path)[1]))
+            if sourcenum >= 0:
+                Media_Array[sourcenum].Play()
+                Slider_Array[sourcenum].SetRange(sourcenum, Media_Array[sourcenum].Length())
 
     def onTimer(self, event):
         "The timer for slider"
-        current = self.player.Tell()
+
+        sourcenum = event.GetId()
+        current = Media_Array[sourcenum].Tell()
 
         if (current < 0):
             current = 0
-        Slider_Array[0].SetValue(current)
+        Slider_Array[sourcenum].SetValue(current)
 
-        if(current == self.player.Length()):
-            Play_Array[0].SetBitmap(self.image1)
+        if(current == Media_Array[sourcenum].Length()):
+            Play_Array[sourcenum].SetBitmap(self.image1)
 
         hours  = (current / 1000) / 3600
         minutes = (current / 1000) / 60 - (hours * 60)
         seconds = (current / 1000) - (minutes * 60) - (hours*3600)
 
-        if (current == self.player.Length()):
-            Slider_Array[0].SetValue(0)
+        if (current == Media_Array[sourcenum].Length()):
+            Slider_Array[sourcenum].SetValue(0)
             hours = 0
             minutes = 0
             seconds = 0
 
         #Doesnt display as 0:XX:XX when less than an hour has elapsed.
         if hours<=0:
-            self.mainTime.SetLabel(' %d:%.2d ' % (minutes, seconds))
+            Time_Array[sourcenum].SetLabel(' %d:%.2d ' % (minutes, seconds))
         else:
-            self.mainTime.SetLabel(' %d:%.2d:%.2d ' %(hours,minutes,seconds))
+            Time_Array[sourcenum].SetLabel(' %d:%.2d:%.2d ' %(hours,minutes,seconds))
 
     def onSearch(self, event):
         query = self.searchBar.GetValue()
@@ -209,7 +221,7 @@ class TestToolBar(wx.Frame):
             BlankMessageBox = wx.MessageDialog(None, 'Please enter a search query', 'Error!', wx.ICON_ERROR)
             BlankMessageBox.ShowModal()
         else:
-            self.createSliders(randint(2,9)) #For testing purposes we are using random numbers
+            self.createSliders(7) #For testing purposes we are using random numbers
 
 
         #lattice = lecture.getLattice()            This is what the actual code should be like
@@ -226,13 +238,12 @@ class TestToolBar(wx.Frame):
         source = Play_Array[sourcenum]
         source.SetBitmap(self.image1)
         source.Bind(wx.EVT_BUTTON, self.playFile)
-
-        if sourcenum==0:
-            self.player.Pause()
+        Media_Array[sourcenum].Pause()
 
     def Seek(self, event):
         "Seeks in slider"
-        self.player.Seek(Slider_Array[0].GetValue())
+        sourcenum = int(event.GetEventObject().GetName())
+        Media_Array[sourcenum].Seek(Slider_Array[sourcenum].GetValue())
 
     def splitAudio(a, b):
         "splits the audio file from t=a to t=b milliseconds"
@@ -250,11 +261,12 @@ class TestToolBar(wx.Frame):
     def createSliders(self,number):
         "method that creates sliders and play buttons as search results"
         # multiple for loops that remove previous search results
+
         for p in range (1, len(Slider_Array)):
             Slider_Array[p].Hide()
             Play_Array[p].Hide()
 
-        for p in range(0, len(Time_Array)):
+        for p in range(1, len(Time_Array)):
             Time_Array[p].Hide()
 
         for p in range(0, len(Line_Array)):
@@ -273,7 +285,7 @@ class TestToolBar(wx.Frame):
             self.play.Bind(wx.EVT_BUTTON, self.playFile)
             Play_Array.append(self.play)
             self.sizer.Add(self.play, wx.ALIGN_RIGHT | wx.RIGHT)
-            slider = wx.Slider(self.panel, wx.ID_ANY, size=(300, -1))
+            slider = wx.Slider(self.panel, wx.ID_ANY, size=(300, -1), name=str(i))
             slider.Bind(wx.EVT_SLIDER, self.Seek)
             slider.Disable()
             Slider_Array.append(slider)
@@ -288,6 +300,22 @@ class TestToolBar(wx.Frame):
             self.sizer.Add(line_1, flag=wx.EXPAND)
             self.sizer.Add(line_2, flag=wx.EXPAND)
             self.sizer.Add(line_3, flag=wx.EXPAND)
+            player = wx.media.MediaCtrl(self.panel)
+            Media_Array.append(player)
+            timer = wx.Timer(self, id=i)
+            timer.Bind(wx.EVT_TIMER, self.onTimer, id=i)
+            timer.Start(10)
+            Timer_Array.append(timer)
+
+        i = 0
+        for audio in os.listdir("audio/"):
+            if audio.split(".")[1] == "wav":
+                if not Media_Array[i].Load(os.path.abspath("audio/"+audio)):
+                    wx.MessageBox("Unable to load this file, it is in the wrong format")
+                else:
+                    Slider_Array[i].Enable()
+
+            i+=1
         self.SetSize((601,401))
         self.SetSize((600, 400))
 

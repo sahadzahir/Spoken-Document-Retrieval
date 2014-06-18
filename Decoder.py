@@ -41,7 +41,7 @@ class Decoder():
 
 			#transfer the file
 			print('Uploading ' + final_file_name + '...')
-
+			#ftp.cwd("upload/")
 			ftp.storbinary('STOR '+ final_file_name, upload_file)
 
 			print('Upload finished.')
