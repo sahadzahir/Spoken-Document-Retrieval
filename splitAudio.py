@@ -1,15 +1,18 @@
 from pydub import AudioSegment
 
-def splitAudio(a, b):
+i = 0
+def splitAudio(a, b,infile,outfile):
     "splits the audio file from t=a to t=b milliseconds"
-    path = "/Users/oem/Desktop/hi.wav"
-    audio = AudioSegment.from_wav('C:\\Users\\oem\\Documents\\Recordings\\Evo Bio\\000311_0015.wav')
+    #path = "/Users/oem/Desktop/Segment"+str(++i)+".wav"
+    #audio = AudioSegment.from_wav('C:\\Users\\oem\\Desktop\\test.wav')
+    audio = AudioSegment.from_wav(infile)
+
     audio_segment = audio[a:b]
-    audio_segment.export(path,format='wav')
+    audio_segment.export(outfile,format='wav')
 
 
 
-splitAudio(1700000, 1730000)
+splitAudio(0, 10000,'C:\\Users\\oem\\Desktop\\test.wav',"/Users/oem/Desktop/Segment"+str(++i)+".wav")
 
 
 
