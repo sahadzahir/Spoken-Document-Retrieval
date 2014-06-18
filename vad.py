@@ -139,7 +139,7 @@ if __name__ == '__main__':
     # open file, read block by block 
     # in_snd_file = sys.argv[1]
     # fin = open(in_snd_file,'rb')
-    fin = open(os.path.abspath("C:\Users\oem\Desktop\hi.wav"),'rb')
+    fin = open(os.path.abspath("/Users/CardMaster/Desktop/Spoken-Document-Retrieval/audio/example5.wav"),'rb')
     fin.read(44)
     block = fin.read(4000)
 
