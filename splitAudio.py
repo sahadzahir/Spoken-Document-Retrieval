@@ -17,7 +17,7 @@ def splitAudio(a, b):
 
 
 
-splitAudio(600000, 610000)
+splitAudio(1700000, 1730000)
 
 
 
