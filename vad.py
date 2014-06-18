@@ -6,7 +6,7 @@ usage: vad.py [file.wav]
 
 import sys,os,struct,math
 
-UseEndpointing = False
+UseEndpointing = True
 DEBUG=False
 vad_out_template="chunked/chunk%05i.pcm"
 
@@ -24,7 +24,7 @@ class VAD:
         self.threshold=0
         self.frame_size = 400    # please tune these defaults accordingly
         self.frame_step = 160
-        self.threshold = 2500
+        self.threshold = 100
         self.hangover_threshold = 50   # 50 frame for short segments
         self.buffer = []
         self.frame_cnt = -1
