@@ -14,6 +14,9 @@ from pydub import AudioSegment
 from random import randint
 import time
 import os
+import vad
+import Segmenter
+import Decoder
 
 FRAMETB = True
 TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
@@ -156,6 +159,8 @@ class TestToolBar(wx.Frame):
         # Checks if file has been opened
         self.fileOpen = 0
 
+        # Path of original Audio
+        self.path = ""
         # Final thing to do for a toolbar is call the Realize() method. This
         # causes it to render (more or less, that is).
         tb.Realize()
@@ -163,8 +168,8 @@ class TestToolBar(wx.Frame):
 
     def openFile(self, event):
         "Opens File Dialog for choosing media file"
-        frame = PopUp(self)
-        frame.Show()
+        self.frame = PopUp(self)
+        self.frame.Show()
 
     def playFile(self, event):
         "Plays Chosen Media"
@@ -222,6 +227,16 @@ class TestToolBar(wx.Frame):
             BlankMessageBox.ShowModal()
         else:
             i=0
+            out = os.path.dirname(vad.__file__)+"/audio"
+
+            segmenter = Segmenter.Segmenter(self.path,out)  # constructor for segmenter object
+                                                                # takes in absolute paths for inputfile and output directory
+            segmenter.segmentAudio()  # does the segmentation
+
+            # Sends the segmented audio to ftp server
+            d = Decoder.Decoder()
+            d.DecodeAudio("compressedAudio/")
+
             for audio in os.listdir("audio/"):
                 if audio.split(".")[1] == "wav":
                     i+=1
@@ -301,9 +316,10 @@ class TestToolBar(wx.Frame):
             timer.Start(10)
             Timer_Array.append(timer)
 
-        
+        i = 0
         for audio in os.listdir("audio/"):
             if audio.split(".")[1] == "wav":
+                print i
                 if not Media_Array[i].Load(os.path.abspath("audio/"+audio)):
                     wx.MessageBox("Unable to load this file, it is in the wrong format")
                 else:
@@ -381,7 +397,7 @@ class PopUp(wx.Frame):
         if msg.ShowModal() == wx.ID_OK:
             if not msg.GetPath == '' :
                 path = msg.GetPath()
-                self.path = path
+                self.myToolBar.path = path
                 self.txtctrl1.SetValue(path)
 
                 if not self.myToolBar.player.Load(path):

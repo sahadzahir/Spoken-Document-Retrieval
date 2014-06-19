@@ -80,6 +80,3 @@ class Decoder():
 	def AudioLength(self):
 		pass
 
-
-d = Decoder()
-d.DecodeAudio("compressedAudio/")

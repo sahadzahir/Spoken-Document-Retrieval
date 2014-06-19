@@ -22,9 +22,9 @@ class VAD:
 
     def __init__(self):
         self.threshold=0
-        self.frame_size = 400    # please tune these defaults accordingly
+        self.frame_size = 300    # please tune these defaults accordingly
         self.frame_step = 160
-        self.threshold = 100
+        self.threshold = 150
         self.hangover_threshold = 50   # 50 frame for short segments
         self.buffer = []
         self.frame_cnt = -1

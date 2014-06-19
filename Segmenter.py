@@ -47,11 +47,7 @@ class Segmenter():
                 else:
                     print " SPEECH END "
                     i+=1
-                    self.splitAudio(temp,time,self.infile,self.outpath+"\\Segment"+str(i)+".wav")
+                    self.splitAudio(temp,time,self.infile,self.outpath+"/Segment"+str(i)+".wav")
 
             block = fin.read(4000)
 
-out = os.path.dirname(vad.__file__)+"audio"
-segmenter = Segmenter("/Users/CardMaster/Desktop/hi.wav",out)  # constructor for segmenter object
-                                                                # takes in absolute paths for inputfile and output directory
-segmenter.segmentAudio()  # does the segmentation
