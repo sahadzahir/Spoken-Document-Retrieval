@@ -221,7 +221,13 @@ class TestToolBar(wx.Frame):
             BlankMessageBox = wx.MessageDialog(None, 'Please enter a search query', 'Error!', wx.ICON_ERROR)
             BlankMessageBox.ShowModal()
         else:
-            self.createSliders(7) #For testing purposes we are using random numbers
+            i=0
+            for audio in os.listdir("audio/"):
+                if audio.split(".")[1] == "wav":
+                    i+=1
+
+            self.createSliders(i) # Creates the search results based on how many segments
+                                  # there are in the directory audio/
 
 
         #lattice = lecture.getLattice()            This is what the actual code should be like
@@ -295,7 +301,7 @@ class TestToolBar(wx.Frame):
             timer.Start(10)
             Timer_Array.append(timer)
 
-        i = 0
+        
         for audio in os.listdir("audio/"):
             if audio.split(".")[1] == "wav":
                 if not Media_Array[i].Load(os.path.abspath("audio/"+audio)):

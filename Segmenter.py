@@ -3,7 +3,7 @@ import vad
 import os
 import struct
 
-infile = "C:\Users\oem\Desktop\hi.wav"
+infile = "/Users/CardMaster/Desktop/hi.wav"
 i=0
 temp = None
 
@@ -23,7 +23,7 @@ def splitAudio(a, b,infile,outfile):
 # test the vad against a file
 myvad = vad.VAD()
 
-fin = open(os.path.abspath("C:\Users\oem\Desktop\hi.wav"),'rb')
+fin = open(os.path.abspath("/Users/CardMaster/Desktop/hi.wav"),'rb')
 fin.read(44)
 block = fin.read(4000)
 
@@ -47,7 +47,7 @@ while len(block) != 0:
         else:
             print " SPEECH END "
             i+=1
-            splitAudio(int(temp),time,infile,"C:\\Users\\oem\\Desktop\\Segment"+str(i)+".wav")
+            splitAudio(int(temp),time,infile,"/Users/CardMaster/Desktop/Segment"+str(i)+".wav")
 
 
     block = fin.read(4000)
