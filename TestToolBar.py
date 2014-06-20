@@ -227,7 +227,7 @@ class TestToolBar(wx.Frame):
             BlankMessageBox.ShowModal()
         else:
             i=0
-            out = os.path.dirname(vad.__file__)+"/audio"
+            out = os.path.dirname(vad.__file__)+os.sep+"audio"
 
             segmenter = Segmenter.Segmenter(self.path,out)  # constructor for segmenter object
                                                                 # takes in absolute paths for inputfile and output directory
@@ -237,7 +237,7 @@ class TestToolBar(wx.Frame):
             d = Decoder.Decoder()
             d.DecodeAudio("compressedAudio/")
 
-            for audio in os.listdir("audio/"):
+            for audio in os.listdir("audio"+os.sep):
                 if audio.split(".")[1] == "wav":
                     i+=1
 
@@ -317,10 +317,10 @@ class TestToolBar(wx.Frame):
             Timer_Array.append(timer)
 
         i = 0
-        for audio in os.listdir("audio/"):
+        for audio in os.listdir("audio"+os.sep):
             if audio.split(".")[1] == "wav":
                 print i
-                if not Media_Array[i].Load(os.path.abspath("audio/"+audio)):
+                if not Media_Array[i].Load(os.path.abspath("audio"+os.sep+audio)):
                     wx.MessageBox("Unable to load this file, it is in the wrong format")
                 else:
                     Slider_Array[i].Enable()

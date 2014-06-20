@@ -47,7 +47,6 @@ class Segmenter():
                 else:
                     print " SPEECH END "
                     i+=1
-                    self.splitAudio(temp,time,self.infile,self.outpath+"/Segment"+str(i)+".wav")
+                    self.splitAudio(temp,time,self.infile,self.outpath+os.sep+"Segment"+str(i)+".wav")
 
             block = fin.read(4000)
-
