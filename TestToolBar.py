@@ -1,7 +1,7 @@
 # !/usr/bin/python
 """
 Authors: Sahad, Shashvat
-Last updated:    Thu, May 22, 2014  5:06:55 PM
+Last updated:    Thu, Jun 19, 2014  6:06 PM
 """
 
 import wx
@@ -11,7 +11,6 @@ import wave
 import wx.lib.scrolledpanel as scrolled
 import Lattice
 from pydub import AudioSegment
-from random import randint
 import time
 import os
 import vad

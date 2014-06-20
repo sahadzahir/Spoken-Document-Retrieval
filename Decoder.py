@@ -43,7 +43,7 @@ class Decoder():
 			print('Uploading ' + final_file_name + '...')
 
 			# The directory for the gzip to be uploaded to is "upload/"
-			ftp.cwd("upload/")
+			#ftp.cwd("upload/")
 			ftp.storbinary('STOR '+ final_file_name, upload_file)
 
 			print('Upload finished.')
@@ -69,13 +69,10 @@ class Decoder():
 		#print 'Closing file ' + filename
 		#file.close()
 
-
-
-
 		#Deletes all the segmented audio from audio/ after gzip
-		#fileList = os.listdir(os.path.abspath("audio/"))
-		#for fileName in fileList:
-		#	os.remove(os.path.abspath("audio/")+"/"+fileName)
+		fileList = os.listdir(os.path.abspath("audio/"))
+		for fileName in fileList:
+			os.remove(os.path.abspath("audio/")+"/"+fileName)
 
 	def AudioLength(self):
 		pass
