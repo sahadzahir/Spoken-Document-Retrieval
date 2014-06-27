@@ -16,6 +16,7 @@ import os
 import vad
 import Segmenter
 import Decoder
+import atexit
 
 FRAMETB = True
 TBFLAGS = ( wx.TB_HORIZONTAL  # toolbar arranges icons horizontally
@@ -228,9 +229,9 @@ class TestToolBar(wx.Frame):
             i=0
             out = os.path.dirname(vad.__file__)+os.sep+"audio"
 
-            segmenter = Segmenter.Segmenter(self.path,out)  # constructor for segmenter object
+            segmenter = Segmenter.Segmenter(self.path,out, name="Segment")  # constructor for segmenter object
                                                                 # takes in absolute paths for inputfile and output directory
-            segmenter.segmentAudio()  # does the segmentation
+            segmenter.segmentAudio("/Users/CardMaster/Desktop/SEGMENTTIMESTEST.txt")  # does the segmentation
 
             # Sends the segmented audio to ftp server
             d = Decoder.Decoder()
@@ -315,7 +316,7 @@ class TestToolBar(wx.Frame):
             timer.Start(10)
             Timer_Array.append(timer)
 
-        i = 0
+        i = 1
         for audio in os.listdir("audio"+os.sep):
             if audio.split(".")[1] == "wav":
                 print i
@@ -324,13 +325,21 @@ class TestToolBar(wx.Frame):
                 else:
                     Slider_Array[i].Enable()
 
-            i+=1
+                i+=1
         self.SetSize((601,401))
         self.SetSize((600, 400))
 
         # After search, message dialogue to tell user that search has completed
         searchCompleteMessageBox = wx.MessageDialog(None, 'Search Complete!', 'Congratulations!', wx.ICON_ERROR)
         searchCompleteMessageBox.ShowModal()
+
+    def exit_handler():
+        #Deletes all the segmented audio from audio/ after gzip
+        fileList = os.listdir(os.path.abspath("audio/"))
+        for fileName in fileList:
+            os.remove(os.path.abspath("audio/")+"/"+fileName)
+
+    atexit.register(exit_handler)
 
 
 

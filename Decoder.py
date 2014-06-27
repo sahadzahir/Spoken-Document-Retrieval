@@ -17,7 +17,7 @@ class Decoder():
 		# original audio is copied to directory inside project file
 		#segmented audio will be located in audio/ under project directory
 
-		tar = tarfile.open( filePath+"compressedAudio.tar.gz", "w:gz" )
+		tar = tarfile.open( filePath+"utteranceTest1.tar.gz", "w:gz" )
 		tar.add("audio/")
 		tar.close()
 
@@ -27,7 +27,7 @@ class Decoder():
 		ftp.connect(host='192.122.139.244', port=7010)
 		ftp.login('sahad', 'R33pydLj')
  
-		upload_file_path = filePath+"compressedAudio.tar.gz"
+		upload_file_path = filePath+"utteranceTest1.tar.gz"
 
 		# Sending the gzip file through ftp
 
@@ -43,7 +43,7 @@ class Decoder():
 			print('Uploading ' + final_file_name + '...')
 
 			# The directory for the gzip to be uploaded to is "upload/"
-			#ftp.cwd("upload/")
+			ftp.cwd('upload')
 			ftp.storbinary('STOR '+ final_file_name, upload_file)
 
 			print('Upload finished.')
@@ -69,10 +69,6 @@ class Decoder():
 		#print 'Closing file ' + filename
 		#file.close()
 
-		#Deletes all the segmented audio from audio/ after gzip
-		fileList = os.listdir(os.path.abspath("audio/"))
-		for fileName in fileList:
-			os.remove(os.path.abspath("audio/")+"/"+fileName)
 
 	def AudioLength(self):
 		pass
